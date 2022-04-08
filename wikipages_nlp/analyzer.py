@@ -26,7 +26,7 @@ class Analyzer:
                             'relativ', 'motion', 'space', 'time', 'work', 'achieve',
                             'leisure', 'home', 'money', 'relig', 'death', 'assent',
                             'nonfl', 'filler']
-            self.headers = self.liwc_category_names
+            # self.headers = self.liwc_category_names
             # print(self.liwc_category_names)
 
 
@@ -89,8 +89,9 @@ class Analyzer:
 
     def liwc_tokenize(self, msg):
         # you may want to use a smarter tokenizer
-        for match in re.finditer(r'\w+', msg, re.UNICODE):
-            yield match.group(0)
+        # for match in re.finditer(r'\w+', msg, re.UNICODE):
+        #     yield match.group(0)
+        return msg.split()
 
     def liwc_counts(self, msg_tokens):
         from collections import Counter
@@ -118,7 +119,7 @@ class Analyzer:
             print(wc)
         return liwc_metrics
 
-    def liwc_analyze(self, msg):
+    def liwc_analyze_new_but_old(self, msg):
         parse, category_names = liwc.load_token_parser('LIWC2007_English100131.dic')
 
         msg = msg.lower()
@@ -133,6 +134,40 @@ class Analyzer:
         from collections import Counter
         counts = Counter(category for token in tokens for category in parse(token))
         print(counts)
+
+    def liwc_analyze(self, msg):
+        parse, liwc_category_names = liwc.load_token_parser('LIWC2007_English100131.dic')
+        headers = ['funct', 'pronoun', 'ppron', 'i', 'we', 'you',
+                        'shehe', 'they', 'ipron', 'article', 'verb',
+                        'auxverb', 'past', 'present', 'future', 'adverb',
+                        'preps', 'conj', 'negate', 'quant', 'number', 'swear',
+                        'social', 'family', 'friend', 'humans', 'affect',
+                        'posemo', 'negemo', 'anx', 'anger', 'sad', 'cogmech',
+                        'insight', 'cause', 'discrep', 'tentat', 'certain',
+                        'inhib', 'incl', 'excl', 'percept', 'see', 'hear',
+                        'feel', 'bio', 'body', 'health', 'sexual', 'ingest',
+                        'relativ', 'motion', 'space', 'time', 'work', 'achieve',
+                        'leisure', 'home', 'money', 'relig', 'death', 'assent',
+                        'nonfl', 'filler']
+
+        tokens = msg.lower().split()
+
+        wc = len(tokens)
+        from collections import Counter
+        counts = Counter(category for token in tokens for category in parse(token))
+        print(counts)
+
+        results = {}
+        for item in headers:
+            results[item] = 0
+
+        results['wc'] = wc
+
+        for item in counts:
+            results[item] = counts[item]/wc
+
+        return results
+
 
     def empath_analyze(self, msg):
         lexicon = Empath()

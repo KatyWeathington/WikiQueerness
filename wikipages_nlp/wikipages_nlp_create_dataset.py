@@ -64,6 +64,47 @@ pprint.pprint("-- LIWC --")
 pprint.pprint(msg)
 pprint.pprint(metrics)
 
+
+import liwc
+import re
+import nltk
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from empath import Empath
+
+parse, liwc_category_names = liwc.load_token_parser('LIWC2007_English100131.dic')
+headers = ['funct', 'pronoun', 'ppron', 'i', 'we', 'you',
+                'shehe', 'they', 'ipron', 'article', 'verb',
+                'auxverb', 'past', 'present', 'future', 'adverb',
+                'preps', 'conj', 'negate', 'quant', 'number', 'swear',
+                'social', 'family', 'friend', 'humans', 'affect',
+                'posemo', 'negemo', 'anx', 'anger', 'sad', 'cogmech',
+                'insight', 'cause', 'discrep', 'tentat', 'certain',
+                'inhib', 'incl', 'excl', 'percept', 'see', 'hear',
+                'feel', 'bio', 'body', 'health', 'sexual', 'ingest',
+                'relativ', 'motion', 'space', 'time', 'work', 'achieve',
+                'leisure', 'home', 'money', 'relig', 'death', 'assent',
+                'nonfl', 'filler']
+
+tokens = msg.lower().split()
+
+wc = len(tokens)
+from collections import Counter
+counts = Counter(category for token in tokens for category in parse(token))
+print(counts)
+
+results = {}
+for item in headers:
+    results[item] = 0
+
+results['wc'] = wc
+
+for item in counts:
+    results[item] = counts[item]/wc
+
+
+
+print(counts)
+
 # VADER
 # @TODO: Add link to VADER here.
 analyzer = Analyzer('Vader')
